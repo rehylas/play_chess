@@ -9,30 +9,11 @@ import numpy as np
 from wuziboard import WuziBoard,PotColor
 
 from enum import Enum
+from play_random import  GamePlayer
 
-ROW_NUM = 7
-ECO_NUM = 7
+ROW_NUM = 10
+ECO_NUM = 10
 
-
-
-def ucb( is_exploration, quality,  times, total_times):
-	if is_exploration :
-		c = 1 /math.sqrt(2.0)
-	else:
-		c =0.0
-		
-	#ucb = quality /times + c* sqrt(2*ln(total_times) /times)
-	# quality = subnode.get_quality_value()
-	# times = subnode.get_visit_times()
-	# total_times = node.get_visit_times       ( rootnode.get_visit_times  )
-	left =		quality / 	times
-	right = 2.0*math.log( total_times/ times   )
-	score = left + c * math.sqrt(right)
-	return score 
-	
-
-
-	
 class GameFivePot(object):
 
 	def __init__(self):
@@ -183,36 +164,7 @@ class GameFivePot(object):
 	def __repr__(self):
 		return "Game step count: {}, AvailAction len: {},  ".format( self.potCount,	 len(self.AvailAction) )
 		
-class GamePlayer(object):
-	
-	def __init__(self, potColor ):
-		self.actionHis = []
-		self.color = potColor
-  	
-  	
-	def getActionHis(self):
-		return self.actionHis
-  		
-	def play(self, game):
-		actions = game.getActions()
-		action = self.choiceActions( actions )
-		self.actionHis = self.actionHis +[action]
 
-		gameInfo , isOver, isWin = game.action(action , self.color )
-		
-		return gameInfo , isOver, isWin
-		
-		pass
-		  	
-	def choiceActions( self, actions ):
-		action = random.choice( actions  )
-		return action
-		
-		
-		
-		
-	def __repr__(self):
-		return "color: {}, actionHis: {},  ".format(	self.color, self.actionHis )
 
 def playRount():
 

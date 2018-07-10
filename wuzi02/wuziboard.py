@@ -46,6 +46,7 @@ class WuziBoard(object):
             turtle.pendown()
             turtle.setpos(x+500, y)
 
+        turtle.speed(5)
         if( ActionHis != None):
             self.drawNow( ActionHis )
 
@@ -67,15 +68,15 @@ class WuziBoard(object):
             turtle.setpos(x, y)
             turtle.pendown()
             if( potsite[2] != PotColor.Black ) :
-                turtle.dot(10,"Red")
+                turtle.dot(15,"Red")
             else:
-                turtle.dot(10, "Black")
+                turtle.dot(15, "Black")
 
             if( potsite ==  RunAction[len(RunAction) - 1 ] ):
                 if (potsite[2] != PotColor.Black):
-                    turtle.dot(20, "Red")
+                    turtle.dot(25, "Red")
                 else:
-                    turtle.dot(20, "Black")
+                    turtle.dot(25, "Black")
 
         pass
 
