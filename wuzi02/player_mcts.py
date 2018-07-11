@@ -29,11 +29,52 @@ class MCTS_SATE(Enum):
 
 class Node():
     def __init__(self ):
-        self.times = 0
-        self.wins = 0
-        self.values = ()
+        self.data = [ 0,0, () ]   #times, wins, values
+        self.nodeInfo=[ 0, 0, 0 ]   #type 0 root, 1 node, 2 leves ;   sons, level
+
+        #self.times = 0
+        #self.wins = 0
+        #self.values = ()
         self.parent = None
         self.children = []
+        pass
+
+    def getType(self):
+        return self.nodeInfo[0]
+
+    def setVaule(self, value):
+        self.data[2] = value
+
+    def setParent(self, parentNode):
+        self.parent = parentNode
+
+    def addChild(self, childNode ):
+        self.children += [ childNode ]
+
+
+    def __eq__(self, other):
+        if hash(self) == hash(other):
+            return True
+        return False
+
+class Tree():
+    def __init__(self):
+        pass
+
+    def load(self, filename ):
+        pass
+
+    def save(self, filename):
+        pass
+
+    def expandNode(self, parentNode, value ):
+        childNode = Node()
+        childNode.setVaule( value )
+        childNode.setParent( parentNode )
+        parentNode.addChild( childNode )
+        return  childNode
+
+        pass
 
 
 
