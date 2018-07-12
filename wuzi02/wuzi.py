@@ -10,6 +10,7 @@ from wuziboard import WuziBoard,PotColor
 
 from enum import Enum
 from play_random import  GamePlayer
+from player_mcts import GamePlayer_mcts
 
 ROW_NUM = 10
 ECO_NUM = 10
@@ -28,6 +29,9 @@ ECO_NUM = 10
 class GameFivePot(object):
 
 	def __init__(self):
+		self.reset()
+
+  	def reset(self):
 		self.potCount  =0;
 		self.AllAction	=[]
 		self.ActionHis = []
@@ -38,9 +42,6 @@ class GameFivePot(object):
 
 		self.AvailAction = self.AllAction
 		self.RunAction = [[0 for col in range(ROW_NUM)] for row in range(ECO_NUM)]
-
-  	def reset(self):
-		self.__init__(self)
 		pass
 
 	def getActions(self):
@@ -209,7 +210,18 @@ def playRount():
 
 	pass
 
+def mctsPlayer_train():
+	play1 = GamePlayer(PotColor.Black)
+	play2 = GamePlayer_mcts(PotColor.White)
+	game = GameFivePot()
+	play2.train(game, play1,10 )
+
+	pass
+
 def main():
+	mctsPlayer_train();
+	return
+
 	result, game, winner = playRount()
 	actionHis = game.getActionHis()
 	drawBoard(ROW_NUM,  actionHis  )
@@ -263,7 +275,7 @@ def listdim( list1 , list2 ):  # list1 - list2
 	return list(set(list1) - set(list2))
 
 if __name__ == "__main__":
-	test()
-	#main()
+	#test()
+	main()
 
 	pass    

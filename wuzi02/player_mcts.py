@@ -20,6 +20,7 @@ MCTS  四个阶段：
 '''
 
 from enum import Enum
+import random
 
 class MCTS_SATE(Enum):
     Selection = 1
@@ -82,25 +83,36 @@ class Tree():
 #输出：
 1.创建
 2.获取已落子
-3.落子（play ）    输入：game
+3.落子（play ） 下一步        输入：game
 4.读取经验文件  loadTreeFile
 5.保存经验文件  saveTreeFile
-6.落子（走棋action ）  返回：棋面，是否结束，赢棋  self.RunAction,  isOver, isWin
-7.训练(trainPlay)  输入:game
+ // 6.落子（走棋action ）  返回：棋面，是否结束，赢棋  self.RunAction,  isOver, isWin
+7.训练(trainPlay)  训练n轮 输入:game, player_random, nRound
 
 内部函数：
 1. 落子选择  ： 1）随机  2）训练选择  3）比赛选择
 2. BP反馈
-3.
+3. trainRound 下一局
+4. choiceActions_random
+5. choiceActions_train
+6. choiceActions_real
 
 '''
 class GamePlayer_mcts(object):
 
+
+    ############### 输出函数
     def __init__(self, potColor ):
 
         self.actionHis = []
         self.color = potColor
+        self.name = 'mcts_player'
+        self.rootNode = None
+        self.curNode  = Node
 
+    def reset(self):
+        self.actionHis = []
+        pass
 
     def getActionHis(self):
         return self.actionHis
@@ -112,23 +124,84 @@ class GamePlayer_mcts(object):
         self.actionHis = self.actionHis +[action]
 
         gameInfo, isOver, isWin = game.action(action, self.color)
-
         return gameInfo, isOver, isWin
 
     #训练
-    def train(self, game):
+    def train(self, game, player , nRount ):
+
+        for i in range(nRount):
+            gameinfo, isOver, isWin = self.trainRound(game ,player )
+            print gameinfo, isOver, isWin
+            self.bp();
+            player.reset()
+            game.reset()
+            self.reset()
+
+    ############### 内部函数
+    def trainStep(self, game):
         actions = game.getActions()
         action = self.choiceActions(actions)
         self.actionHis = self.actionHis + [action]
 
         gameInfo, isOver, isWin = game.action(action, self.color)
-
         return gameInfo, isOver, isWin
 
+    def trainRound(self, game ,player ):
+        play1 = player
+        play2 = self
 
+        if(random.random() >0.5  ):
+            gameinfo, isOver, isWin = play2.trainStep(game)
+
+        while (True):
+            gameinfo, isOver, isWin = play1.play(game)
+            if (isWin):
+                print  play1.name, 'I am win ', play1.color
+                return True, game, play1.color
+            if (isOver):
+                break
+
+            gameinfo, isOver, isWin = play2.trainStep(game)
+            if (isWin):
+                print play2.name, 'I am win ', play2.color
+                return True, game, play2.color
+            if (isOver):
+                break
+            #print game
+            pass
+        pass
+        print 'no win '
+        return False, game, 0
+
+    #精华部分
     def choiceActions(self, actions):
+        if( self.isExpand ):
+            return self.choiceActions_random(actions)
+        if( self.isReal ):
+            return self.choiceActions_real(actions)
+        if( self.isTrain ):
+            return self.choiceActions_train(actions)
+
+        #throw 'error'
+        print ' error '
+        return random.choice(actions)
+
+    #
+    def choiceActions_random(self, actions):
         action = random.choice(actions)
         return action
+
+    def choiceActions_real(self, actions):
+        action = random.choice(actions)
+        return action
+
+    def choiceActions_train(self, actions):
+        action = random.choice(actions)
+        return action
+
+    def bp(self):
+        pass
+
 
     def __repr__(self):
         return "color: {}, actionHis: {},  ".format(self.color, self.actionHis)

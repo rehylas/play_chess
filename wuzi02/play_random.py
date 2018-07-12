@@ -11,7 +11,10 @@ class GamePlayer(object):
     def __init__(self, potColor ):
         self.actionHis = []
         self.color = potColor
+        self.name = 'random_player'
 
+    def reset(self):
+        self.actionHis = []
 
     def getActionHis(self):
         return self.actionHis
