@@ -77,8 +77,24 @@ class Tree():
         pass
 
 
+'''
+#mcts 棋手
+#输出：
+1.创建
+2.获取已落子
+3.落子（play ）    输入：game
+4.读取经验文件  loadTreeFile
+5.保存经验文件  saveTreeFile
+6.落子（走棋action ）  返回：棋面，是否结束，赢棋  self.RunAction,  isOver, isWin
+7.训练(trainPlay)  输入:game
 
-class GamePlayer(object):
+内部函数：
+1. 落子选择  ： 1）随机  2）训练选择  3）比赛选择
+2. BP反馈
+3.
+
+'''
+class GamePlayer_mcts(object):
 
     def __init__(self, potColor ):
 

@@ -13,6 +13,17 @@ from play_random import  GamePlayer
 
 ROW_NUM = 10
 ECO_NUM = 10
+'''
+#五子棋游戏
+#输出：
+1.创建
+2.复位
+3.获取可落子清单
+4.获取盘面状态
+5.是否结束
+6.落子（走棋action ）  返回：棋面，是否结束，赢棋  self.RunAction,  isOver, isWin
+
+'''
 
 class GameFivePot(object):
 
@@ -27,7 +38,11 @@ class GameFivePot(object):
 
 		self.AvailAction = self.AllAction
 		self.RunAction = [[0 for col in range(ROW_NUM)] for row in range(ECO_NUM)]
-  	
+
+  	def reset(self):
+		self.__init__(self)
+		pass
+
 	def getActions(self):
 		return self.AvailAction
 		
@@ -236,11 +251,19 @@ def ActionSection( Num ):
 	return sumVal
 
 def test():
+	sonAction =[(0,1),(1,1),(2,2)]
+	avaAction = [(0,1),(1,1),(0,0), (2,3)]
+
+	print listdim(avaAction, sonAction )
+
+
 	pass
 
+def listdim( list1 , list2 ):  # list1 - list2
+	return list(set(list1) - set(list2))
 
 if __name__ == "__main__":
-	#test()
-	main()
+	test()
+	#main()
 
 	pass    
