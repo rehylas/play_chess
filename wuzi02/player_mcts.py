@@ -28,54 +28,6 @@ class MCTS_SATE(Enum):
     Simulation = 3
     Backpropagation =4
 
-class Node():
-    def __init__(self ):
-        self.data = [ 0,0, () ]   #times, wins, values
-        self.nodeInfo=[ 0, 0, 0 ]   #type 0 root, 1 node, 2 leves ;   sons, level
-
-        #self.times = 0
-        #self.wins = 0
-        #self.values = ()
-        self.parent = None
-        self.children = []
-        pass
-
-    def getType(self):
-        return self.nodeInfo[0]
-
-    def setVaule(self, value):
-        self.data[2] = value
-
-    def setParent(self, parentNode):
-        self.parent = parentNode
-
-    def addChild(self, childNode ):
-        self.children += [ childNode ]
-
-
-    def __eq__(self, other):
-        if hash(self) == hash(other):
-            return True
-        return False
-
-class Tree():
-    def __init__(self):
-        pass
-
-    def load(self, filename ):
-        pass
-
-    def save(self, filename):
-        pass
-
-    def expandNode(self, parentNode, value ):
-        childNode = Node()
-        childNode.setVaule( value )
-        childNode.setParent( parentNode )
-        parentNode.addChild( childNode )
-        return  childNode
-
-        pass
 
 
 '''
@@ -128,7 +80,6 @@ class GamePlayer_mcts(object):
 
     #训练
     def train(self, game, player , nRount ):
-
         for i in range(nRount):
             gameinfo, isOver, isWin = self.trainRound(game ,player )
             print gameinfo, isOver, isWin
@@ -191,14 +142,17 @@ class GamePlayer_mcts(object):
         action = random.choice(actions)
         return action
 
+    #获取当前节点， 遍历子节点，选取 UCB 值最大的
     def choiceActions_real(self, actions):
         action = random.choice(actions)
         return action
 
+    #优先选择 未走过的路径， 进入路径后，开始展页模式  如果所有路径走过之后， 选择UCB最大的
     def choiceActions_train(self, actions):
         action = random.choice(actions)
         return action
 
+    #获取当前节点，向上溯源，回馈计算
     def bp(self):
         pass
 
