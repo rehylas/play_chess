@@ -11,41 +11,37 @@ Node
 点信息： id,  type, leaf no,   level no
 
 输出：
-创建
-updateTimesWins(isWin)
-getUCBVal
+create
+setData(Data)
 setParent(Node)
 addSubNode(Node)
 getSubNodeList()
-getSubNodebyVal(  val )
 
+updateTimesWins(isWin)
+getUCBVal
+setVaule(self, value):
+
+#getSubNodebyVal(  val )
 内部
-updateUCBVal
+
 
 '''
-
 
 class Node():
     def __init__(self, info=None, data=None ):
         self.data = [ 0,0, () ]   #times, wins, values
         if( data != None ):
             self.data = data
-        self.nodeInfo=[ 0, 0, 0 ]   #type 0 root, 1 node,   2 leves number;   sons, level ,  Nodeid
+        self.nodeInfo=[  0, 0 ,0, [] ]   #Nodeid,  level ,   parentId, childrenIdList
         if( info != None ):
             self.nodeInfo = info
-        self.id = 0
-        #self.times = 0
-        #self.wins = 0
-        #self.values = ()
+
         self.parent = None
         self.children = []
         pass
 
-    def getType(self):
-        return self.nodeInfo[0]
-
-    def setVaule(self, value):
-        self.data[2] = value
+    def setData(self,data):
+        self.data = data
 
     def setParent(self, parentNode):
         self.parent = parentNode
@@ -53,9 +49,22 @@ class Node():
     def addChild(self, childNode ):
         self.children += [ childNode ]
 
+    def getSubNodeList(self):
+        return self.children
+
+
+    def setVaule(self, value):
+        self.data[2] = value
+
+
+    def __repr__(self):
+        return "nodeInfo: {},  ".format(self.nodeInfo )
 
     def __eq__(self, other):
-        if hash(self) == hash(other):
+        selfVal = "{}".format(self.nodeInfo )
+        otherVal = "{}".format(other.nodeInfo)
+
+        if hash(selfVal) == hash(otherVal):
             return True
         return False
 
@@ -83,6 +92,7 @@ class Tree():
     def __init__(self):
         self.root_Node = Node()
         self.cur_Node = self.root_Node
+        self.NodeCount = 1  # 节点+ 叶子数
         pass
 
     def reset(self):
@@ -231,12 +241,47 @@ def createTree():
     firstTree.addSubNodeToCur_Node( subNode )
     pass
 
+class user(  ):
+    def __init__(self,data):
+        self.data= data
+    def __eq__(self, other):
+        if hash(self) == hash(other):
+            return True
+        return False
+
+    def val(self):
+        return hash(self.data)
+
+def test():
+    lst = [1,'a', True]
+    rec = (1,'a', True)
+
+    print lst
+    print rec
+    d1 = user('1')
+    d2 = user('1')
+
+    print d1.data
+
+    #print (d1 == d2)
+    print d1.val()
+    print d2.val()
+
+    Node1 = Node(info=(1,1,0,[]))
+    Node2 = Node(info=(1, 2, 0, []))
+    print Node1
+    print (Node1 == Node2 )
+    pass
+
+
+
+
 def main():
     pass
 
 
 if __name__ == "__main__":
-	#test()
+	test()
 	#main()
 
 	pass

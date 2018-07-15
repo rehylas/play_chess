@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# Author:Hiuhung Wan
+# Author: hylas zhang
 
 import turtle
 from enum import Enum

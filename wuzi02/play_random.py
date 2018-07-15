@@ -30,8 +30,6 @@ class GamePlayer(object):
         return gameInfo, isOver, isWin
 
 
-
-
     def choiceActions(self, actions):
         action = random.choice(actions)
         return action
