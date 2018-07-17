@@ -21,6 +21,10 @@ MCTS  四个阶段：
 
 from enum import Enum
 import random
+from Tree4mcts import *
+from wuzi import *
+from play_random import  *
+
 
 class MCTS_SATE(Enum):
     Selection = 1
@@ -28,6 +32,9 @@ class MCTS_SATE(Enum):
     Simulation = 3
     Backpropagation =4
 
+class PotColor(Enum):
+    Black = 1
+    White = 2
 
 
 '''
@@ -52,7 +59,6 @@ class MCTS_SATE(Enum):
 '''
 class GamePlayer_mcts(object):
 
-
     ############### 输出函数
     def __init__(self, potColor ):
 
@@ -61,16 +67,26 @@ class GamePlayer_mcts(object):
         self.name = 'mcts_player'
         self.rootNode = None
         self.curNode  = Node
+        self.mctsTree = TreeMcts()
+        self.isExpand = False
+        self.isReal = False
+        self.isTrain = False
 
     def reset(self):
         self.actionHis = []
+        self.mctsTree.reset()
         pass
 
     def getActionHis(self):
         return self.actionHis
 
+
     #游戏
     def play(self, game):
+        self.isExpand = False
+        self.isReal = True
+        self.isTrain = False
+
         actions = game.getActions()
         action = self.choiceActions( actions )
         self.actionHis = self.actionHis +[action]
@@ -80,10 +96,14 @@ class GamePlayer_mcts(object):
 
     #训练
     def train(self, game, player , nRount ):
+        self.isExpand = False
+        self.isReal = False
+        self.isTrain = True
+
         for i in range(nRount):
-            gameinfo, isOver, isWin = self.trainRound(game ,player )
-            print gameinfo, isOver, isWin
-            self.bp();
+            isWin, game, winColor = self.trainRound(game ,player )
+            print 'train {}/{},  wins/times:{}/{}'.format(i,nRount,self.mctsTree.wins, self.mctsTree.times)
+            self.bp(  isWin );
             player.reset()
             game.reset()
             self.reset()
@@ -95,14 +115,17 @@ class GamePlayer_mcts(object):
         self.actionHis = self.actionHis + [action]
 
         gameInfo, isOver, isWin = game.action(action, self.color)
-        return gameInfo, isOver, isWin
+        return gameInfo, isOver, isWin, action
 
+
+    #False, game, play2.color
+    #isWin, game, winColor
     def trainRound(self, game ,player ):
         play1 = player
         play2 = self
 
         if(random.random() >0.5  ):
-            gameinfo, isOver, isWin = play2.trainStep(game)
+            gameinfo, isOver, isWin, action = play2.trainStep(game)
 
         while (True):
             gameinfo, isOver, isWin = play1.play(game)
@@ -112,10 +135,12 @@ class GamePlayer_mcts(object):
             if (isOver):
                 break
 
-            gameinfo, isOver, isWin = play2.trainStep(game)
+            gameinfo, isOver, isWin, action = play2.trainStep(game)
+            self.doNewAction(action)
+
             if (isWin):
                 print play2.name, 'I am win ', play2.color
-                return True, game, play2.color
+                return False, game, play2.color
             if (isOver):
                 break
             #print game
@@ -123,6 +148,28 @@ class GamePlayer_mcts(object):
         pass
         print 'no win '
         return False, game, 0
+
+    def doNewAction(self, action):
+        nodeList  = self.mctsTree.cur_Node.children
+        data = [0, 0, action[0], action[1]]
+        '''
+        if(   nodeList == None):
+            # no this action
+            self.mctsTree.addSubNodeToCur_Data(data)
+            self.isExpand = True
+            return
+'''
+        for node in nodeList :
+            nodeAction = (node.data[2],node.data[3])
+            if(action == nodeAction ):
+                self.mctsTree.moveToNode_byNode( node )
+                return
+        # no this action
+        self.mctsTree.addSubNodeToCur_Data(data)
+        self.isExpand = True
+
+        pass
+
 
     #精华部分
     def choiceActions(self, actions):
@@ -144,18 +191,45 @@ class GamePlayer_mcts(object):
 
     #获取当前节点， 遍历子节点，选取 UCB 值最大的
     def choiceActions_real(self, actions):
-        action = random.choice(actions)
+        action = self.mctsTree.getBestUCBAction(  avalActions =  actions, is_exploration = False )
+        #action = random.choice(actions)
         return action
 
     #优先选择 未走过的路径， 进入路径后，开始展页模式  如果所有路径走过之后， 选择UCB最大的
     def choiceActions_train(self, actions):
-        action = random.choice(actions)
+        hasActions = self.mctsTree.getHasActions()
+        noHasActions = list(set(actions) - set(hasActions))
+        if( len(noHasActions) == 0):
+            action = self.mctsTree.getBestUCBAction(  avalActions =  actions, is_exploration =True )
+            pass
+        else:
+            action = random.choice( noHasActions )
         return action
 
     #获取当前节点，向上溯源，回馈计算
-    def bp(self):
+    def bp(self,isWin):
+        self.mctsTree.bp(isWin)
         pass
 
 
     def __repr__(self):
         return "color: {}, actionHis: {},  ".format(self.color, self.actionHis)
+
+
+def test():
+    player = GamePlayer(PotColor.Black)
+    game = GameFivePot()
+    mctsPlayer = GamePlayer_mcts(PotColor.White)
+    mctsPlayer.train( game ,player, 10000)
+    mctsPlayer.mctsTree.save('train10000.npy')
+
+    print '----------------------------------------'
+    print mctsPlayer.mctsTree.printTree()
+
+    print 'win/times:', mctsPlayer.mctsTree.wins,'/', mctsPlayer.mctsTree.times
+    return
+
+
+
+if __name__ == "__main__":
+    test()
